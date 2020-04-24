@@ -16,7 +16,7 @@ class Pitch:
         
 class Lyric:
     def __init__(self, letter):
-        self.default_x = '6.58'
+        self.default_x = ''
         self.default_y = '-53.20'
         self.number = '1'
         self.relative_y = '-30.00'
@@ -38,13 +38,13 @@ class Lyric:
 class Note:
     def __init__(self, letter, rest=False):
         self.pitch = Pitch()
+        self.lyric = Lyric(letter)
         self.duration = '1'
         self.voice = '1'
         self.type = 'quarter'
         self.stem = 'up'
-        self.lyric = Lyric(letter)
-        self.default_x = '106.41'
-        self.default_y = '-25.00'
+        self.default_x = ''
+        self.default_y = ''
         self.rest = rest
 
     def set_el(self, element):
@@ -73,17 +73,22 @@ class Note:
 class Measure:
     def __init__(self, text):
         self.number = '100'
-        self.width = '136.20'
+        self.width = ''
         self.text = text
 
     def set_el(self, element):
+        max_text_len = 8
+        if len(self.text) > max_text_len:
+            raise ValueError('text length is over {}'.format(max_text_len))
+
         for letter in self.text:
             note = ET.SubElement(element, 'note')
             Note(letter).set_el(note)
 
-        # 長音防止のために休符を挿入
-        note = ET.SubElement(element, 'note')
-        Note('', rest=True).set_el(note)
+        for _ in range(max_text_len - len(self.text)):
+            # 長音防止のために休符を挿入
+            note = ET.SubElement(element, 'note')
+            Note('', rest=True).set_el(note)
         
         element.set('number', self.number)
         element.set('width', self.width)
