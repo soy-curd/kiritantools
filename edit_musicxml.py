@@ -72,7 +72,7 @@ class Note:
 
 class Measure:
     def __init__(self, text):
-        self.number = '1'
+        self.number = '100'
         self.width = '136.20'
         self.text = text
 
@@ -89,6 +89,10 @@ class Measure:
         element.set('width', self.width)
         return element
 
+
+def chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
     
 def load_xml(filename):
     tree = ET.parse(filename)
@@ -112,8 +116,11 @@ def edit_xml(tree, text):
     tree = clean_xml(tree)
     root = tree.getroot()
     part = root.find('part')
-    measure = ET.SubElement(part, 'measure')
-    Measure(text).set_el(measure)
+    texts = text.split()
+    for x in texts:
+        for chunk_text in chunks(x, 8):
+            measure = ET.SubElement(part, 'measure')
+            Measure(chunk_text).set_el(measure)
     return tree
 
 
@@ -132,4 +139,4 @@ def main(text):
 
 
 if __name__ == '__main__':
-    main("こんにちわ")
+    main("おはようございます こんにちわ　こんばんわ")
