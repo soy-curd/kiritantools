@@ -33,6 +33,11 @@ sh run.sh
 - [x] header が消える
 - [x] 拗音対応
 - [x] 促音対応
+- [ ] ピッチ対応
+  - https://masarakki.github.io/blog/2012/10/07/make-yukkuri-to-use-accent/
+  - イントネーションと Hz(https://www.jpf.go.jp/j/project/japanese/archive/globe/07/08.pdf)
+  - 音階と Hz(https://tomari.org/main/java/oto.html)
+    - 60Hz で一度くらい?
 - [ ] ブレス対応
   ```
   <notations>

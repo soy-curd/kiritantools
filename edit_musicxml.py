@@ -154,6 +154,11 @@ def edit_xml(tree, text):
     tree = clean_xml(tree)
     root = tree.getroot()
     part = root.find('part')
+    first_measure = part.find('measure')
+    direction = first_measure.find('direction')
+    sound = direction.find('sound')
+    sound.set('tempo', '150')  # テンポの変更
+
     chunked_texts = chunk_text(text)
     for text_by_measure in chunked_texts:
         measure = ET.SubElement(part, 'measure')
