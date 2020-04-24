@@ -1,0 +1,1 @@
+docker run --rm -it --gpus all  -v `pwd`:/opt kiritan bash
