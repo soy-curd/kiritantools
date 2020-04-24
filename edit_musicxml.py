@@ -13,13 +13,14 @@ class Pitch:
         octave.text = self.octave
 
         return element
-        
+
+
 class Lyric:
     def __init__(self, letter):
         self.default_x = ''
-        self.default_y = '-53.20'
+        self.default_y = ''
+        self.relative_y = ''
         self.number = '1'
-        self.relative_y = '-30.00'
         self.syllabic = 'single'
         self.text = letter
 
@@ -89,7 +90,7 @@ class Measure:
             # 長音防止のために休符を挿入
             note = ET.SubElement(element, 'note')
             Note('', rest=True).set_el(note)
-        
+
         element.set('number', self.number)
         element.set('width', self.width)
         return element
@@ -98,7 +99,8 @@ class Measure:
 def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
-    
+
+
 def load_xml(filename):
     tree = ET.parse(filename)
     return tree
@@ -117,15 +119,45 @@ def clean_xml(tree):
     return tree
 
 
+def chunk_text(text):
+    '''
+    "きょうわ　よい　ひです"
+    -> 
+    [["きょ", "う", "わ"], ["よ", "い"], ["ひ", "で", "す"]]
+    '''
+    skip_letters = ('ゃ', 'ゅ', 'ょ', 'っ')
+    max_chunk_length = 8
+    splited_texts = text.split()
+    result = []
+    for splited_text in splited_texts:
+        buf = []
+
+        for i, x in enumerate(splited_text):
+            if x in skip_letters:
+                continue
+
+            if i < len(splited_text) - 1 and splited_text[i+1] in skip_letters:
+
+                buf.append(splited_text[i: i+2])
+                continue
+
+            buf.append(x)
+
+        for chunk_text in chunks(buf, max_chunk_length):
+            result.append(chunk_text)
+
+    print(result)
+    return result
+
+
 def edit_xml(tree, text):
     tree = clean_xml(tree)
     root = tree.getroot()
     part = root.find('part')
-    texts = text.split()
-    for x in texts:
-        for chunk_text in chunks(x, 8):
-            measure = ET.SubElement(part, 'measure')
-            Measure(chunk_text).set_el(measure)
+    chunked_texts = chunk_text(text)
+    for text_by_measure in chunked_texts:
+        measure = ET.SubElement(part, 'measure')
+        Measure(text_by_measure).set_el(measure)
     return tree
 
 
@@ -144,4 +176,4 @@ def main(text):
 
 
 if __name__ == '__main__':
-    main("おはようございます こんにちわ　こんばんわ")
+    main("おはようございます きょうわいいてんきですねー")

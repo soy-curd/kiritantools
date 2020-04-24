@@ -31,3 +31,13 @@ sh run.sh
 - [x] python で xml 操作
 - [x] 日本語がエンコード
 - [x] header が消える
+- [x] 拗音対応
+- [x] 促音対応
+- [ ] ブレス対応
+  ```
+  <notations>
+  <articulations>
+    <breath-mark/>
+    </articulations>
+  </notations>
+  ```
